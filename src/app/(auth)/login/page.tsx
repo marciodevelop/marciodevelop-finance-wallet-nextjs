@@ -28,10 +28,10 @@ export default function LoginPage() {
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
-      const response = signIn("credentials", {
+      await signIn("credentials", {
         password,
         email,
-        redirect: false,
+        redirect: true,
         redirectTo: "/",
       });
     } catch (error) {
