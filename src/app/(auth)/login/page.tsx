@@ -48,7 +48,7 @@ export default function LoginPage() {
       <span className="mx-auto font-bold text-zinc-700 text-2xl">Fiance Wallet</span>
       <h1 className="text-xl font-semibold text-zinc-700">Login</h1>
       <div>
-        <label htmlFor="email">Email</label>
+        <label className="text-sm" htmlFor="email">Email</label>
         <Input
           {...register("email")}
           id="email"
@@ -60,7 +60,7 @@ export default function LoginPage() {
         )}
       </div>
       <div>
-        <label htmlFor="password">Password</label>
+        <label className="text-sm" htmlFor="password">Password</label>
         <Input
           {...register("password")}
           id="password"
@@ -72,7 +72,7 @@ export default function LoginPage() {
           <span className="text-red-500 text-xs">{errors.password.message}</span>
         )}
       </div>
-      <div className="">
+      <div className="mt-4">
         <span className="text-sm">
           Ainda não tem conta?{" "}
           <Link href="/register" className="hover:underline">
