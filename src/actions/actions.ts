@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db"
 import { users } from "@/db/schema"
 import { z } from "zod"
-import bcript from "bcrypt"
+import { hash } from "bcryptjs"
 
 const registerUserSchema = z.object({
   name: z.string().min(1),
@@ -22,7 +22,7 @@ export const registerUser = async (body: any) => {
     return NextResponse.json({ error: "email ja cadastrado" }, { status: 400 })
   }
 
-  const hashedpassword = await bcript.hash(password, 10)
+  const hashedpassword = await hash(password, 10)
 
   await db.insert(users).values({
     name,
