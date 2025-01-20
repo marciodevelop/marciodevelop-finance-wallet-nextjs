@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { use, useEffect, useState } from "react";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const schema = z.object({
   amount: z.coerce.number().positive(),
@@ -27,6 +28,7 @@ const schemaTransfer = z.object({
 export default function Page() {
   const session = useSession();
   const [userAccountId, setUserAccountId] = useState<string | null>(null);
+  const [transactions, setTransactions] = useState<any[]>([]);
 
   const { register, handleSubmit } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -50,7 +52,6 @@ export default function Page() {
           "Content-Type": "application/json",
         },
       });
-      console.log("response", response);
     } catch (error) {
       console.log(error);
     }
@@ -70,12 +71,10 @@ export default function Page() {
           "Content-Type": "application/json",
         },
       });
-      console.log("response", response);
     } catch (error) {
       console.log(error);
     }
   }
-
 
   async function getAccountId(userId: string) {
     try {
@@ -97,16 +96,31 @@ export default function Page() {
       console.error("Error fetching account:", error);
     }
   }
+
+  async function getTransactions(fromAccountNumber: number) {
+    try {
+      const response = await fetch(`/api/transactions?fromAccountNumber=${fromAccountNumber}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setTransactions(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   
   useEffect(() => {
     if(!userAccountId && session.data?.user?.id) {
       getAccountId(session.data?.user?.id)
     }
   }, [session.data?.user?.id])
-
+  
   useEffect(() => {
     if (userAccountId) {
-      console.log("Account data:", userAccountId);
+      getTransactions(Number(userAccountId));
     }
   }, [userAccountId]);
  
@@ -168,6 +182,36 @@ export default function Page() {
             </form>
           </DialogContent>
         </Dialog>
+      </div>
+      <div className="col-span-5 flex flex-col gap-2">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>valor</TableHead>
+              <TableHead>data</TableHead>
+              <TableHead>descri</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {transactions.length > 0 ? (
+              transactions.map((transaction) => {
+                const date = new Date(transaction.createdAt);
+
+                return (
+                  <TableRow key={transaction.id}>
+                  <TableHead>{transaction.amount}</TableHead>
+                  <TableHead>{date.toLocaleDateString('pt-BR')}</TableHead>
+                  <TableHead>{transaction.description}</TableHead>
+                </TableRow>
+                )
+              })
+            ) : (
+              <TableRow>
+                <TableHead>Nenhuma transação encontrada</TableHead>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </section>
   );

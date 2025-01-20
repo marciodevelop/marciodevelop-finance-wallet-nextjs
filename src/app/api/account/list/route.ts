@@ -5,7 +5,6 @@ export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const param = url.searchParams.get("userId")
-    console.log("param", param);
 
     if (!param) {
       return NextResponse.json({ error: "O Parametro 'userId' e obrigatorio" }, { status: 400 });
