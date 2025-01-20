@@ -6,11 +6,11 @@ export const walletAccountsRelations = relations(walletAccounts, ({one, many}) =
 		fields: [walletAccounts.userId],
 		references: [walletUsers.id]
 	}),
-	walletTransactions_fromAccountId: many(walletTransactions, {
-		relationName: "walletTransactions_fromAccountId_walletAccounts_id"
+	walletTransactions_fromAccountNumber: many(walletTransactions, {
+		relationName: "walletTransactions_fromAccountNumber_walletAccounts_accountNumber"
 	}),
-	walletTransactions_toAccountId: many(walletTransactions, {
-		relationName: "walletTransactions_toAccountId_walletAccounts_id"
+	walletTransactions_toAccountNumber: many(walletTransactions, {
+		relationName: "walletTransactions_toAccountNumber_walletAccounts_accountNumber"
 	}),
 }));
 
@@ -27,15 +27,15 @@ export const walletSessionsRelations = relations(walletSessions, ({one}) => ({
 }));
 
 export const walletTransactionsRelations = relations(walletTransactions, ({one, many}) => ({
-	walletAccount_fromAccountId: one(walletAccounts, {
-		fields: [walletTransactions.fromAccountId],
-		references: [walletAccounts.id],
-		relationName: "walletTransactions_fromAccountId_walletAccounts_id"
+	walletAccount_fromAccountNumber: one(walletAccounts, {
+		fields: [walletTransactions.fromAccountNumber],
+		references: [walletAccounts.accountNumber],
+		relationName: "walletTransactions_fromAccountNumber_walletAccounts_accountNumber"
 	}),
-	walletAccount_toAccountId: one(walletAccounts, {
-		fields: [walletTransactions.toAccountId],
-		references: [walletAccounts.id],
-		relationName: "walletTransactions_toAccountId_walletAccounts_id"
+	walletAccount_toAccountNumber: one(walletAccounts, {
+		fields: [walletTransactions.toAccountNumber],
+		references: [walletAccounts.accountNumber],
+		relationName: "walletTransactions_toAccountNumber_walletAccounts_accountNumber"
 	}),
 	walletTransactionType: one(walletTransactionTypes, {
 		fields: [walletTransactions.transactionTypeId],
@@ -50,7 +50,7 @@ export const walletTransactionTypesRelations = relations(walletTransactionTypes,
 
 export const walletTransactionReversalsRelations = relations(walletTransactionReversals, ({one}) => ({
 	walletTransaction: one(walletTransactions, {
-		fields: [walletTransactionReversals.originalTransactionId],
-		references: [walletTransactions.id]
+		fields: [walletTransactionReversals.originalTransactionNumber],
+		references: [walletTransactions.transactionNumber]
 	}),
 }));

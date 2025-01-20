@@ -1,5 +1,5 @@
 {
-  "id": "102710c3-bc70-405e-9c83-29015dc55300",
+  "id": "d5546dac-4e25-4f1e-a2a8-339b16bba6f6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -11,9 +11,15 @@
         "id": {
           "name": "id",
           "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
+          "primaryKey": false,
+          "notNull": false,
           "default": "gen_random_uuid()"
+        },
+        "account_number": {
+          "name": "account_number",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
@@ -26,6 +32,20 @@
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'checking'"
         },
         "created_at": {
           "name": "created_at",
@@ -118,15 +138,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "wallet_sessions_session_token_unique": {
-          "name": "wallet_sessions_session_token_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "session_token"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -142,9 +154,15 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "original_transaction_id": {
-          "name": "original_transaction_id",
-          "type": "uuid",
+        "reversal_number": {
+          "name": "reversal_number",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "original_transaction_number": {
+          "name": "original_transaction_number",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -156,7 +174,7 @@
         },
         "status": {
           "name": "status",
-          "type": "varchar(255)",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
         },
@@ -170,22 +188,30 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "wallet_transaction_reversals_original_transaction_id_wallet_transactions_id_fk": {
-          "name": "wallet_transaction_reversals_original_transaction_id_wallet_transactions_id_fk",
+        "wallet_transaction_reversals_original_transaction_number_wallet_transactions_transaction_number_fk": {
+          "name": "wallet_transaction_reversals_original_transaction_number_wallet_transactions_transaction_number_fk",
           "tableFrom": "wallet_transaction_reversals",
           "tableTo": "wallet_transactions",
           "columnsFrom": [
-            "original_transaction_id"
+            "original_transaction_number"
           ],
           "columnsTo": [
-            "id"
+            "transaction_number"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "wallet_transaction_reversals_reversal_number_unique": {
+          "name": "wallet_transaction_reversals_reversal_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "reversal_number"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -201,15 +227,21 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "from_account_id": {
-          "name": "from_account_id",
-          "type": "uuid",
+        "transaction_number": {
+          "name": "transaction_number",
+          "type": "serial",
           "primaryKey": false,
           "notNull": true
         },
-        "to_account_id": {
-          "name": "to_account_id",
-          "type": "uuid",
+        "from_account_number": {
+          "name": "from_account_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_account_number": {
+          "name": "to_account_number",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -227,9 +259,15 @@
         },
         "status": {
           "name": "status",
-          "type": "varchar(255)",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -241,30 +279,30 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "wallet_transactions_from_account_id_wallet_accounts_id_fk": {
-          "name": "wallet_transactions_from_account_id_wallet_accounts_id_fk",
+        "wallet_transactions_from_account_number_wallet_accounts_account_number_fk": {
+          "name": "wallet_transactions_from_account_number_wallet_accounts_account_number_fk",
           "tableFrom": "wallet_transactions",
           "tableTo": "wallet_accounts",
           "columnsFrom": [
-            "from_account_id"
+            "from_account_number"
           ],
           "columnsTo": [
-            "id"
+            "account_number"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "wallet_transactions_to_account_id_wallet_accounts_id_fk": {
-          "name": "wallet_transactions_to_account_id_wallet_accounts_id_fk",
+        "wallet_transactions_to_account_number_wallet_accounts_account_number_fk": {
+          "name": "wallet_transactions_to_account_number_wallet_accounts_account_number_fk",
           "tableFrom": "wallet_transactions",
           "tableTo": "wallet_accounts",
           "columnsFrom": [
-            "to_account_id"
+            "to_account_number"
           ],
           "columnsTo": [
-            "id"
+            "account_number"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "wallet_transactions_transaction_type_id_wallet_transaction_types_id_fk": {
@@ -282,7 +320,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "wallet_transactions_transaction_number_unique": {
+          "name": "wallet_transactions_transaction_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "transaction_number"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -314,15 +360,7 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "wallet_transaction_types_name_unique": {
-          "name": "wallet_transaction_types_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

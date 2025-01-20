@@ -46,11 +46,6 @@ export default function Register() {
         },
       });
 
-      const data = await response.json();
-
-      console.log(data);
-
-      // const response = await signup(formData);
     } catch (error) {
       console.error("Erro ao cadastrar usuário ss:", error);
     }
